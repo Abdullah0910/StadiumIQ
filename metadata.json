@@ -1,0 +1,6 @@
+{
+  "name": "Smart Stadium & Tournament Operations Platform",
+  "description": "An enterprise-grade, GenAI-powered platform that optimizes venue crowd flow, navigation, volunteer scheduling, security response, and fan experiences using Google Gemini.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

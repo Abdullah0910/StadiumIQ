@@ -1,0 +1,375 @@
+import { StadiumLocation, MatchSchedule, IncidentReport, VolunteerTask, StadiumNotification } from './types';
+
+export const INITIAL_LOCATIONS: StadiumLocation[] = [
+  {
+    id: 'restroom-1',
+    name: 'North Stand Restroom (Level 1)',
+    type: 'restroom',
+    description: 'Near Sector A, includes 4 wheelchair-accessible cubicles and parent room.',
+    x: 25,
+    y: 18,
+    density: 'high',
+    currentWaitTimeMinutes: 12,
+    accessibilityNote: 'ADA Compliant, equipped with low-height sinks and tactile guide paths.',
+  },
+  {
+    id: 'restroom-2',
+    name: 'East Stand Restroom (Level 2)',
+    type: 'restroom',
+    description: 'Near VIP Lounge Gate, gender-neutral, single-stall cubicles.',
+    x: 75,
+    y: 35,
+    density: 'low',
+    currentWaitTimeMinutes: 2,
+    accessibilityNote: 'ADA Compliant, step-free access from elevator.',
+  },
+  {
+    id: 'restroom-3',
+    name: 'South Stand Restroom (Level 1)',
+    type: 'restroom',
+    description: 'Near Sector D food hub. Large capacity, baby change table.',
+    x: 55,
+    y: 82,
+    density: 'medium',
+    currentWaitTimeMinutes: 6,
+    accessibilityNote: 'Step-free access, push-button doors.',
+  },
+  {
+    id: 'restroom-4',
+    name: 'West Stand Restroom (Level 1)',
+    type: 'restroom',
+    description: 'Near Sector F family zone. Children-friendly sinks.',
+    x: 18,
+    y: 65,
+    density: 'high',
+    currentWaitTimeMinutes: 9,
+    accessibilityNote: 'Accessible sinks and grip-bars installed.',
+  },
+
+  {
+    id: 'food-1',
+    name: 'Championship Burgers & Fries',
+    type: 'food_court',
+    description: 'Premium smash burgers, loaded fries, and craft beers.',
+    x: 35,
+    y: 15,
+    density: 'high',
+    currentWaitTimeMinutes: 18,
+    rating: 4.8,
+    specials: ['"The MVP Burger"', 'Truflle Loaded Fries', 'Gluten-Free Buns available'],
+    accessibilityNote: 'Wheelchair-friendly service counter height.',
+  },
+  {
+    id: 'food-2',
+    name: 'Golden Dragon Noodles',
+    type: 'food_court',
+    description: 'Wok-tossed authentic Asian noodles, dumplings, and boba.',
+    x: 65,
+    y: 20,
+    density: 'medium',
+    currentWaitTimeMinutes: 10,
+    rating: 4.5,
+    specials: ['Spicy Dan Dan Noodles', 'Vegan Dumplings'],
+    accessibilityNote: 'Digital tablet ordering available for hearing impaired.',
+  },
+  {
+    id: 'food-3',
+    name: 'The Green Bowl (Healthy Eats)',
+    type: 'food_court',
+    description: '100% organic custom salad bowls, vegan wraps, and cold-press juices.',
+    x: 82,
+    y: 50,
+    density: 'low',
+    currentWaitTimeMinutes: 4,
+    rating: 4.7,
+    specials: ['Superfood Quinoa Bowl', 'Dynamic Protein Wrap'],
+    accessibilityNote: 'Full ingredient list printed in braille, wheelchair accessible seating.',
+  },
+  {
+    id: 'food-4',
+    name: 'Corner Pizza & Gelato',
+    type: 'food_court',
+    description: 'Woodfired thin-crust pizzas, draft drinks, and fresh Italian gelato.',
+    x: 45,
+    y: 85,
+    density: 'high',
+    currentWaitTimeMinutes: 20,
+    rating: 4.6,
+    specials: ['Four-Cheese Stadium Special', 'Pistachio Gelato Slice'],
+    accessibilityNote: 'Audio-guided menu ordering support.',
+  },
+
+  {
+    id: 'gate-n',
+    name: 'North Gate (Gate 1)',
+    type: 'gate',
+    description: 'Main public gate with express bag-check lanes.',
+    x: 50,
+    y: 5,
+    density: 'high',
+    currentWaitTimeMinutes: 25,
+    crowdCount: 3200,
+    accessibilityNote: 'Wide turnstiles with automatic doors for electric wheelchair clearance.',
+  },
+  {
+    id: 'gate-e',
+    name: 'East Gate (Gate 2 - VIP)',
+    type: 'gate',
+    description: 'VIP, Corporate, and Premium Ticket holder entrance.',
+    x: 95,
+    y: 45,
+    density: 'low',
+    currentWaitTimeMinutes: 3,
+    crowdCount: 450,
+    accessibilityNote: 'Elevator-only entry straight to the Hospitality Box.',
+  },
+  {
+    id: 'gate-s',
+    name: 'South Gate (Gate 3)',
+    type: 'gate',
+    description: 'Family-friendly gate and ticketing office.',
+    x: 50,
+    y: 95,
+    density: 'medium',
+    currentWaitTimeMinutes: 11,
+    crowdCount: 1800,
+    accessibilityNote: 'Fast-track priority lane for strollers and mobility aids.',
+  },
+  {
+    id: 'gate-w',
+    name: 'West Gate (Gate 4 - Press & Staff)',
+    type: 'gate',
+    description: 'Staff, Media, and Team buses entry point.',
+    x: 5,
+    y: 45,
+    density: 'medium',
+    currentWaitTimeMinutes: 8,
+    crowdCount: 720,
+    accessibilityNote: 'Step-free ramp entry and tactile ground paving.',
+  },
+
+  {
+    id: 'medical-1',
+    name: 'Main First Aid Clinic (East Concourse)',
+    type: 'medical',
+    description: 'Fully equipped clinic with on-duty physicians, emergency oxygen, and beds.',
+    x: 88,
+    y: 38,
+    density: 'low',
+    currentWaitTimeMinutes: 0,
+    accessibilityNote: 'Fully accessible clinic beds, sign-language interpreter on call.',
+  },
+  {
+    id: 'medical-2',
+    name: 'Satellite Medical Tent (West Stand Sector F)',
+    type: 'medical',
+    description: 'Paramedic rapid-response station for immediate field care.',
+    x: 12,
+    y: 58,
+    density: 'low',
+    currentWaitTimeMinutes: 0,
+    accessibilityNote: 'Level ground access, fully equipped for trauma first response.',
+  },
+
+  {
+    id: 'exit-n',
+    name: 'Main North Emergency Exit',
+    type: 'exit',
+    description: 'High-volume emergency crash door path to Zone A Assembly.',
+    x: 50,
+    y: 1,
+    density: 'low',
+    accessibilityNote: 'Equipped with visual strobe alarms and emergency voice directions.',
+  },
+  {
+    id: 'exit-s',
+    name: 'Main South Emergency Exit',
+    type: 'exit',
+    description: 'High-volume emergency door path to Zone B/C Assembly.',
+    x: 50,
+    y: 99,
+    density: 'low',
+    accessibilityNote: 'Step-free level discharge with panic-bar emergency doors.',
+  },
+
+  {
+    id: 'parking-a',
+    name: 'Premium Parking Lot A',
+    type: 'parking',
+    description: 'Closest to VIP gates. Pre-booked ticket required.',
+    x: 85,
+    y: 10,
+    density: 'high',
+    currentWaitTimeMinutes: 20,
+    accessibilityNote: 'Includes 25 dedicated accessible parking spaces with ample loading zone width.',
+  },
+  {
+    id: 'parking-b',
+    name: 'North General Parking Lot B',
+    type: 'parking',
+    description: 'Public lot. EV charging stations available.',
+    x: 15,
+    y: 10,
+    density: 'medium',
+    currentWaitTimeMinutes: 12,
+    accessibilityNote: 'Shuttle bus with low-floor access running to West and North Gates.',
+  },
+
+  {
+    id: 'merch-1',
+    name: 'Stadium Megastore (Sector B)',
+    type: 'merchandise',
+    description: 'Official tournament store. Custom jersey printing and active team wear.',
+    x: 48,
+    y: 22,
+    density: 'high',
+    currentWaitTimeMinutes: 15,
+    rating: 4.9,
+    accessibilityNote: 'Wide visual spacing, lowered checkout desk for seated patrons.',
+  }
+];
+
+export const INITIAL_MATCHES: MatchSchedule[] = [
+  {
+    id: 'match-1',
+    eventName: 'Championship Final: Titans vs. Wildcats',
+    time: '14:30 - 17:00 (Ongoing)',
+    sector: 'Main Stadium Sector 1 & 2',
+    status: 'ongoing',
+    details: 'The culmination of the grand tournament. Epic gridiron match with record attendance of 55,000.',
+    homeTeam: 'Titans',
+    awayTeam: 'Wildcats'
+  },
+  {
+    id: 'match-2',
+    eventName: 'Consolation Final: Bears vs. Hawks',
+    time: '11:00 - 13:00',
+    sector: 'Stadium Ring Pitch 2',
+    status: 'completed',
+    details: 'Hawks secure 3rd place after a dramatic penalty shootout in final minutes.',
+    homeTeam: 'Bears',
+    awayTeam: 'Hawks'
+  },
+  {
+    id: 'match-3',
+    eventName: 'Post-Match Award Ceremony',
+    time: '17:15 - 18:00',
+    sector: 'Main Podium Stand',
+    status: 'upcoming',
+    details: 'AI-assisted tournament ceremony, handing over medals and the Grand Shield.',
+    homeTeam: 'Tournament MVP',
+    awayTeam: 'Champions Team'
+  }
+];
+
+export const INITIAL_INCIDENTS: IncidentReport[] = [
+  {
+    id: 'incident-1',
+    title: 'Minor Spillage / Slippery Floor',
+    location: 'Sector C Level 1 Concourse',
+    status: 'open',
+    priority: 'medium',
+    description: 'Slipped fizzy drink spilled near the restrooms, posing a minor slipping hazard for runners.',
+    reporterRole: 'Volunteer (Zone-C)',
+    reportedAt: '10:45 AM',
+    aiSummary: 'Incident 1: A liquid hazard near Sector C Level 1 toilets. Needs immediate cleaning crew routing to prevent fan falls during post-match rush.'
+  },
+  {
+    id: 'incident-2',
+    title: 'Severe Crowd Congestion at Gate 1',
+    location: 'Gate 1 (North Entrance)',
+    status: 'open',
+    priority: 'high',
+    description: 'Digital ticket scanner failed for 5 minutes, creating a fast backlog of about 350 incoming fans.',
+    reporterRole: 'Security Officer',
+    reportedAt: '10:48 AM',
+    aiSummary: 'Incident 2: Scanner glitch at North Gate caused quick bottle-neck. Security advises routing new arrivals to South Gate (Gate 3) where queues are light.'
+  },
+  {
+    id: 'incident-3',
+    title: 'Child Temporarily Separated',
+    location: 'Family Play Zone Sector F',
+    status: 'resolved',
+    priority: 'critical',
+    description: 'An 8-year-old child in a red hoodie was temporarily separated. Located by volunteer and reunited with mother within 8 minutes.',
+    reporterRole: 'Volunteer (Zone-F)',
+    reportedAt: '10:35 AM',
+    aiSummary: 'Incident 3: Code Yellow. Rapid response team notified, matched with volunteer check-in. Successfully reunited with family. Zero injuries.'
+  },
+  {
+    id: 'incident-4',
+    title: 'Heat Exhaustion Alert',
+    location: 'Sector A Row 15 Seat 4',
+    status: 'open',
+    priority: 'high',
+    description: 'Elderly fan is showing symptoms of heat dizziness and exhaustion. Requires immediate hydration and wheelchair assistance to the clinic.',
+    reporterRole: 'Fan via SOS App',
+    reportedAt: '10:49 AM',
+    aiSummary: 'Incident 4: High urgency medical. Fan heat stress at Sector A. Dispatching medical buggy with hydration pack from Main Clinic.'
+  }
+];
+
+export const INITIAL_TASKS: VolunteerTask[] = [
+  {
+    id: 'task-1',
+    title: 'Assist Crowd Flow at North Gate',
+    description: 'Direct incoming fans into open turnstile lanes and help with barcode scans.',
+    location: 'North Gate 1',
+    status: 'active',
+    priority: 'high',
+    category: 'crowd',
+    assignee: 'Volunteer Sarah'
+  },
+  {
+    id: 'task-2',
+    title: 'Replenish Water Station',
+    description: 'Check and refill complimentary water dispensers at Section D & F.',
+    location: 'Sector D Family Zone',
+    status: 'pending',
+    priority: 'medium',
+    category: 'info'
+  },
+  {
+    id: 'task-3',
+    title: 'Monitor Lost & Found Desk',
+    description: 'Log and catalog lost items and handle fan inquiries about misplaced wallets or accessories.',
+    location: 'Main Concourse Center Desk',
+    status: 'active',
+    category: 'lost_found',
+    priority: 'medium',
+    assignee: 'Volunteer James'
+  },
+  {
+    id: 'task-4',
+    title: 'Clean Spill Incident 1',
+    description: 'Mop liquid spill near restroom Sector C concourse.',
+    location: 'Sector C Level 1 Concourse',
+    status: 'pending',
+    priority: 'high',
+    category: 'clean'
+  }
+];
+
+export const INITIAL_NOTIFICATIONS: StadiumNotification[] = [
+  {
+    id: 'notif-1',
+    type: 'security',
+    text: 'Crowd Anomaly Detected: Sudden density spike at Sector A concourse near exit ramp. Directing standby stewards to optimize flow.',
+    timestamp: '10:49 AM',
+    isAiGenerated: true
+  },
+  {
+    id: 'notif-2',
+    type: 'announcement',
+    text: 'Match Update: Championship Final Titans vs. Wildcats has kicked off! All spectators requested to complete seating swiftly.',
+    timestamp: '10:30 AM',
+    isAiGenerated: false
+  },
+  {
+    id: 'notif-3',
+    type: 'operations',
+    text: 'Sustainability advice: High ambient sunlight is providing 72% of energy demand via stadium solar panels. Reducing roof lighting level by 30%.',
+    timestamp: '10:15 AM',
+    isAiGenerated: true
+  }
+];
