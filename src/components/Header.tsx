@@ -9,7 +9,7 @@ interface HeaderProps {
   onDismissNotification: (id: string) => void;
 }
 
-export default function Header({
+const Header = React.memo(function Header({
   currentRole,
   onSelectRole,
   notifications,
@@ -118,4 +118,6 @@ export default function Header({
       </div>
     </header>
   );
-}
+});
+
+export default Header;

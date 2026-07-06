@@ -28,9 +28,10 @@ export default function FanDashboard({
   const [loadingInsights, setLoadingInsights] = useState(false);
 
   // Quick select destination
-  const toilets = locations.filter(l => l.type === 'restroom');
-  const foodCourts = locations.filter(l => l.type === 'food_court');
-  const gates = locations.filter(l => l.type === 'gate');
+  const toilets = React.useMemo(() => locations.filter(l => l.type === 'restroom'), [locations]);
+  const foodCourts = React.useMemo(() => locations.filter(l => l.type === 'food_court'), [locations]);
+  const gates = React.useMemo(() => locations.filter(l => l.type === 'gate'), [locations]);
+  const ongoingMatches = React.useMemo(() => matches.filter(m => m.status === 'ongoing'), [matches]);
 
   const handleFetchInsights = async () => {
     setLoadingInsights(true);
@@ -267,7 +268,7 @@ export default function FanDashboard({
 
           {/* Active Schedule Overview */}
           <div className="bg-slate-950/80 rounded-xl border border-slate-800/60 p-4 mb-4">
-            {matches.filter(m => m.status === 'ongoing').map(m => (
+            {ongoingMatches.map(m => (
               <div key={m.id}>
                 <div className="flex items-center justify-between text-[10px] text-emerald-400 font-bold tracking-wider uppercase mb-1">
                   <span>Active Match</span>

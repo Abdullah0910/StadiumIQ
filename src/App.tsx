@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { UserRole, StadiumLocation, MatchSchedule, IncidentReport, VolunteerTask, StadiumNotification } from './types';
 import { INITIAL_LOCATIONS, INITIAL_MATCHES, INITIAL_INCIDENTS, INITIAL_TASKS, INITIAL_NOTIFICATIONS } from './data';
 import Header from './components/Header';
@@ -23,7 +23,7 @@ export default function App() {
   const [isRouting, setIsRouting] = useState(false);
 
   // Route path calculation
-  const handleTriggerRoute = async (startSeat: string, destId: string, accessibility: string) => {
+  const handleTriggerRoute = useCallback(async (startSeat: string, destId: string, accessibility: string) => {
     const destLoc = locations.find(l => l.id === destId);
     if (!destLoc) return;
 
@@ -54,10 +54,10 @@ export default function App() {
     } finally {
       setIsRouting(false);
     }
-  };
+  }, [locations, currentRole]);
 
   // Add tasks
-  const handleAddTask = (newTask: Omit<VolunteerTask, 'id' | 'status'>) => {
+  const handleAddTask = useCallback((newTask: Omit<VolunteerTask, 'id' | 'status'>) => {
     const taskCard: VolunteerTask = {
       ...newTask,
       id: `task-${Date.now()}`,
@@ -74,35 +74,35 @@ export default function App() {
       isAiGenerated: false
     };
     setNotifications(prev => [alert, ...prev]);
-  };
+  }, []);
 
   // Add incidents
-  const handleAddIncident = (newInc: Omit<IncidentReport, 'id' | 'reportedAt'>) => {
+  const handleAddIncident = useCallback((newInc: Omit<IncidentReport, 'id' | 'reportedAt'>) => {
     const incCard: IncidentReport = {
       ...newInc,
       id: `incident-${Date.now()}`,
       reportedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     setIncidents(prev => [incCard, ...prev]);
-  };
+  }, []);
 
   // Resolve tasks
-  const handleResolveTask = (taskId: string) => {
+  const handleResolveTask = useCallback((taskId: string) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: 'completed' as const } : t));
-  };
+  }, []);
 
   // Tune gates wait time
-  const handleTuneGates = (gateId: string, waitTime: number) => {
+  const handleTuneGates = useCallback((gateId: string, waitTime: number) => {
     setLocations(prev => prev.map(loc => loc.id === gateId ? { ...loc, currentWaitTimeMinutes: waitTime } : loc));
-  };
+  }, []);
 
   // Dismiss notification
-  const handleDismissNotification = (id: string) => {
+  const handleDismissNotification = useCallback((id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
-  };
+  }, []);
 
   // Mass Emergency Evacuation Trigger
-  const handleTriggerEvacuation = () => {
+  const handleTriggerEvacuation = useCallback(() => {
     const evacAlert: StadiumNotification = {
       id: `evac-${Date.now()}`,
       type: 'security',
@@ -114,17 +114,19 @@ export default function App() {
 
     // Highlight all exit pins in emergency status
     setLocations(prev => prev.map(l => l.type === 'exit' ? { ...l, density: 'high' } : l));
-  };
+  }, []);
+
+  const handleSelectRole = useCallback((role: UserRole) => {
+    setCurrentRole(role);
+    setOptimizedRoutePath(null); // Clear routing overlays when changing context
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col selection:bg-indigo-500 selection:text-white">
       {/* Top Header */}
       <Header
         currentRole={currentRole}
-        onSelectRole={(role) => {
-          setCurrentRole(role);
-          setOptimizedRoutePath(null); // Clear routing overlays when changing context
-        }}
+        onSelectRole={handleSelectRole}
         notifications={notifications}
         onDismissNotification={handleDismissNotification}
       />

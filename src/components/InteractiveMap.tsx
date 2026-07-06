@@ -9,7 +9,7 @@ interface InteractiveMapProps {
   optimizedRoutePath?: { instructions: string[]; estimatedMinutes: number; pathPoints?: [number, number][] };
 }
 
-export default function InteractiveMap({
+const InteractiveMap = React.memo(function InteractiveMap({
   locations,
   selectedLocation,
   onSelectLocation,
@@ -17,10 +17,12 @@ export default function InteractiveMap({
 }: InteractiveMapProps) {
   const [activeFilter, setActiveFilter] = useState<string>('all');
 
-  const filteredLocations = locations.filter(loc => {
-    if (activeFilter === 'all') return true;
-    return loc.type === activeFilter;
-  });
+  const filteredLocations = React.useMemo(() => {
+    return locations.filter(loc => {
+      if (activeFilter === 'all') return true;
+      return loc.type === activeFilter;
+    });
+  }, [locations, activeFilter]);
 
   // Get color for density
   const getDensityColor = (density: 'low' | 'medium' | 'high') => {
@@ -314,4 +316,6 @@ export default function InteractiveMap({
       `}</style>
     </div>
   );
-}
+});
+
+export default InteractiveMap;

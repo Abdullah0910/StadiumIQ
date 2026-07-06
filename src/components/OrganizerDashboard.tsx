@@ -37,6 +37,10 @@ export default function OrganizerDashboard({
   const [testResults, setTestResults] = useState<TestCaseResult[] | null>(null);
   const [isRunningTests, setIsRunningTests] = useState(false);
 
+  const unresolvedIncidentsCount = React.useMemo(() => {
+    return incidents.filter(i => i.status === 'open').length;
+  }, [incidents]);
+
   const handleRunSuite = () => {
     setIsRunningTests(true);
     setTimeout(() => {
@@ -139,7 +143,7 @@ export default function OrganizerDashboard({
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
             <div>
               <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Active Incidents</span>
-              <h4 className="text-xl font-bold text-slate-100 mt-1">{incidents.filter(i => i.status === 'open').length} Unresolved</h4>
+              <h4 className="text-xl font-bold text-slate-100 mt-1">{unresolvedIncidentsCount} Unresolved</h4>
               <p className="text-[10px] text-amber-400 mt-1">1 Critical alert active</p>
             </div>
             <div className="p-2.5 bg-rose-600/10 text-rose-400 border border-rose-500/20 rounded-lg">

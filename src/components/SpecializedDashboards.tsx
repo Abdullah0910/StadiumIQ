@@ -44,6 +44,10 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
     }
   };
 
+  const activeTasks = React.useMemo(() => {
+    return tasks.filter(t => t.status === 'active' || t.status === 'pending');
+  }, [tasks]);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Active Tasks list */}
@@ -54,7 +58,7 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
         </h3>
 
         <div className="space-y-3 max-h-[360px] overflow-y-auto">
-          {tasks.filter(t => t.status === 'active' || t.status === 'pending').map(task => (
+          {activeTasks.map(task => (
             <div key={task.id} className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -78,7 +82,7 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
             </div>
           ))}
 
-          {tasks.length === 0 && (
+          {activeTasks.length === 0 && (
             <div className="text-center py-10 text-slate-500 text-xs">
               No tasks active. You are fully cleared!
             </div>

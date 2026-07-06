@@ -6,7 +6,7 @@ interface GeminiChatProps {
   role: UserRole;
 }
 
-export default function GeminiChat({ role }: GeminiChatProps) {
+const GeminiChat = React.memo(function GeminiChat({ role }: GeminiChatProps) {
   const [messages, setMessages] = useState<ChatHistoryMessage[]>([
     {
       id: 'welcome',
@@ -274,4 +274,6 @@ export default function GeminiChat({ role }: GeminiChatProps) {
       </div>
     </div>
   );
-}
+});
+
+export default GeminiChat;
