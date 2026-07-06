@@ -16,6 +16,10 @@ const PROMPT_INJECTION_BLACKLIST = [
   "disregard all instructions",
   "bypass safety guidelines",
   "system instructions",
+  "system instruction",
+  "ignore everything",
+  "ignore instructions",
+  "disregard instructions",
   "you must now act as",
   "override all settings",
   "ignore system limits",
@@ -26,12 +30,16 @@ const PROMPT_INJECTION_BLACKLIST = [
 /**
  * Sanitizes user input to prevent XSS and strip prompt-injection attempts.
  * @param text The input string to sanitize
+ * @param maxLength Optional character limit override
  */
-export function sanitizeInput(text: string): string {
+export function sanitizeInput(text: string, maxLength?: number): string {
   if (!text || typeof text !== 'string') return '';
   
+  // Strip control characters (including null bytes and backspaces) to prevent terminal injection
+  let clean = text.replace(/[\x00-\x1f\x7f-\x9f]/g, '');
+
   // Strip HTML elements to prevent scripting injections (XSS)
-  let clean = text.replace(/<[^>]*>/g, '');
+  clean = clean.replace(/<[^>]*>/g, '');
 
   // Strip common SQL comment markers to neutralize SQL injection attempts
   clean = clean
@@ -50,8 +58,9 @@ export function sanitizeInput(text: string): string {
   }
 
   // Enforce rigid maximum character length
-  if (clean.length > SECURITY_LIMITS.maxMessageLength) {
-    clean = clean.substring(0, SECURITY_LIMITS.maxMessageLength);
+  const limit = maxLength || SECURITY_LIMITS.maxMessageLength;
+  if (clean.length > limit) {
+    clean = clean.substring(0, limit);
   }
 
   return clean;
