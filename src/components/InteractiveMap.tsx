@@ -71,7 +71,8 @@ export default function InteractiveMap({
             <button
               key={btn.id}
               onClick={() => setActiveFilter(btn.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+              aria-pressed={activeFilter === btn.id}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 activeFilter === btn.id
                   ? 'bg-indigo-600 text-white shadow-md'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-755 border border-slate-700/50'
@@ -192,7 +193,16 @@ export default function InteractiveMap({
                 key={loc.id}
                 transform={`translate(${mapX}, ${mapY})`}
                 onClick={() => onSelectLocation(loc)}
-                className="cursor-pointer group"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectLocation(loc);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Stadium location: ${loc.name}. Wait time is ${loc.currentWaitTimeMinutes ?? 0} minutes. Crowd density is ${loc.density}.`}
+                className="cursor-pointer group focus:outline-none"
               >
                 {/* Marker outer halo */}
                 <circle
@@ -200,7 +210,9 @@ export default function InteractiveMap({
                   cy="0"
                   r={isSelected ? 22 : 16}
                   className={`transition-all duration-300 fill-slate-900 stroke-2 ${
-                    isSelected ? 'stroke-indigo-400 scale-125' : 'stroke-slate-700 hover:stroke-indigo-500 hover:scale-110'
+                    isSelected 
+                      ? 'stroke-indigo-400 scale-125' 
+                      : 'stroke-slate-700 hover:stroke-indigo-500 hover:scale-110 group-focus:stroke-indigo-400 group-focus:scale-110'
                   }`}
                   shadow-sm="true"
                 />

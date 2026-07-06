@@ -90,23 +90,25 @@ export default function FanDashboard({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-[11px] text-slate-400 font-medium mb-1.5">Your Current Location / Seat</label>
+              <label htmlFor="start-seat-input" className="block text-[11px] text-slate-400 font-medium mb-1.5">Your Current Location / Seat</label>
               <input
+                id="start-seat-input"
                 type="text"
                 value={startSeat}
                 onChange={(e) => setStartSeat(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 placeholder="e.g., Sector A Row 12 Seat 5"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-slate-400 font-medium mb-1.5">Destination</label>
+                <label htmlFor="dest-select" className="block text-[11px] text-slate-400 font-medium mb-1.5">Destination</label>
                 <select
+                  id="dest-select"
                   value={selectedDest}
                   onChange={(e) => setSelectedDest(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 >
                   <optgroup label="Restrooms">
                     {toilets.map(t => <option key={t.id} value={t.id}>{t.name} ({t.currentWaitTimeMinutes}m wait)</option>)}
@@ -121,11 +123,12 @@ export default function FanDashboard({
               </div>
 
               <div>
-                <label className="block text-[11px] text-slate-400 font-medium mb-1.5">Accessibility Profile</label>
+                <label htmlFor="accessibility-select" className="block text-[11px] text-slate-400 font-medium mb-1.5">Accessibility Profile</label>
                 <select
+                  id="accessibility-select"
                   value={accessibility}
                   onChange={(e) => setAccessibility(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 >
                   <option value="none">Standard Path</option>
                   <option value="wheelchair">Wheelchair Access (Ramps, Elevators)</option>
@@ -136,7 +139,7 @@ export default function FanDashboard({
 
             <button
               onClick={() => onTriggerRoute(startSeat, selectedDest, accessibility)}
-              className="w-full mt-2 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/10"
+              className="w-full mt-2 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               <Sparkles className="w-3.5 h-3.5" />
               Calculate Smart Path with Gemini
@@ -158,20 +161,23 @@ export default function FanDashboard({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-[11px] text-slate-400 font-medium mb-1.5">Stadium Announcement / Help Phrase</label>
+              <label htmlFor="translate-input" className="block text-[11px] text-slate-400 font-medium mb-1.5">Stadium Announcement / Help Phrase</label>
               <textarea
+                id="translate-input"
                 rows={2}
                 value={translationText}
                 onChange={(e) => setTranslationText(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500 resize-none"
+                className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
               />
             </div>
 
             <div className="flex gap-3">
+              <label htmlFor="lang-select" className="sr-only">Target Language</label>
               <select
+                id="lang-select"
                 value={targetLang}
                 onChange={(e) => setTargetLang(e.target.value)}
-                className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500"
+                className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               >
                 <option value="Spanish">Spanish (Español)</option>
                 <option value="Japanese">Japanese (日本語)</option>
@@ -183,7 +189,7 @@ export default function FanDashboard({
               <button
                 onClick={handleTranslate}
                 disabled={isTranslating}
-                className="px-6 bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition-colors cursor-pointer"
+                className="px-6 bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {isTranslating ? 'Translating...' : 'Translate'}
               </button>
@@ -191,9 +197,39 @@ export default function FanDashboard({
 
             {translatedResult && (
               <div className="bg-slate-950 border border-slate-800/80 rounded-xl p-4 text-xs">
-                <p className="font-bold text-[10px] uppercase text-indigo-400 tracking-wider mb-1 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Translated Guide
-                </p>
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="font-bold text-[10px] uppercase text-indigo-400 tracking-wider flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Translated Guide
+                  </p>
+                  <button
+                    onClick={() => {
+                      try {
+                        const speechText = translatedResult.split('Pronunciation Guide:')[0].replace(/\[.*?\]:/g, '').trim();
+                        const utterance = new SpeechSynthesisUtterance(speechText);
+                        const langCodes: Record<string, string> = {
+                          'Spanish': 'es-ES',
+                          'Japanese': 'ja-JP',
+                          'Arabic': 'ar-SA',
+                          'German': 'de-DE',
+                          'French': 'fr-FR'
+                        };
+                        utterance.lang = langCodes[targetLang] || 'en-US';
+                        window.speechSynthesis.cancel();
+                        window.speechSynthesis.speak(utterance);
+                      } catch (err) {
+                        console.error('Speech synthesis failed', err);
+                      }
+                    }}
+                    className="px-2 py-1 bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-400 border border-indigo-500/20 rounded-lg text-[10px] font-semibold cursor-pointer flex items-center gap-1 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    title="Speak translated text aloud"
+                    aria-label="Listen to translated text announcement"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                    </svg>
+                    Listen
+                  </button>
+                </div>
                 <p className="text-slate-200 whitespace-pre-wrap">{translatedResult}</p>
               </div>
             )}

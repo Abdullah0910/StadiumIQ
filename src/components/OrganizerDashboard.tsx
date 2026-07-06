@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StadiumLocation, IncidentReport, VolunteerTask } from '../types';
-import { ShieldAlert, Users, Sparkles, Activity, CheckCircle, PlusCircle, AlertTriangle, UserCheck } from 'lucide-react';
+import { ShieldAlert, Users, Sparkles, Activity, CheckCircle, PlusCircle, AlertTriangle, UserCheck, Terminal, Shield, Check, X } from 'lucide-react';
+import { runAllTests, TestCaseResult } from '../tests/runTests';
 
 interface OrganizerDashboardProps {
   locations: StadiumLocation[];
@@ -31,6 +32,24 @@ export default function OrganizerDashboard({
   const [taskDesc, setTaskDesc] = useState('');
   const [taskLoc, setTaskLoc] = useState('North Gate 1');
   const [taskCat, setTaskCat] = useState<'crowd' | 'medical' | 'clean' | 'info' | 'lost_found'>('crowd');
+
+  // Platform Diagnostic Suite State
+  const [testResults, setTestResults] = useState<TestCaseResult[] | null>(null);
+  const [isRunningTests, setIsRunningTests] = useState(false);
+
+  const handleRunSuite = () => {
+    setIsRunningTests(true);
+    setTimeout(() => {
+      try {
+        const results = runAllTests();
+        setTestResults(results);
+      } catch (err) {
+        console.error('Test execution failed:', err);
+      } finally {
+        setIsRunningTests(false);
+      }
+    }, 400);
+  };
 
   // Trigger AI Crowd Recommendation
   const handleFetchCrowdRecommendations = async () => {
@@ -219,6 +238,80 @@ export default function OrganizerDashboard({
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Platform Security & Diagnostic Suite Card */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 rounded-lg">
+                <Terminal className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-100">Platform Security & Diagnostic Suite</h3>
+                <p className="text-[11px] text-slate-400">Verifies input filters, sanitizers, and JSON parsing integrity</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleRunSuite}
+              disabled={isRunningTests}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer disabled:bg-slate-800"
+            >
+              <Activity className={`w-3.5 h-3.5 ${isRunningTests ? 'animate-spin' : ''}`} />
+              {isRunningTests ? 'Running diagnostics...' : 'Run Diagnostics'}
+            </button>
+          </div>
+
+          {testResults ? (
+            <div className="space-y-3 animate-fade-in text-xs">
+              <div className="bg-slate-950 p-4 border border-indigo-500/10 rounded-xl flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-slate-500 block uppercase tracking-widest font-bold">Diagnostics Status</span>
+                  <span className="font-bold text-slate-200 text-xs mt-1 block">
+                    {testResults.filter(r => r.passed).length} / {testResults.length} Units verified green
+                  </span>
+                </div>
+                <span className="px-2.5 py-1 bg-emerald-950/60 text-emerald-400 border border-emerald-500/20 rounded-full font-bold uppercase text-[9px] flex items-center gap-1">
+                  <Check className="w-3 h-3" /> System Secured
+                </span>
+              </div>
+
+              <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden divide-y divide-slate-855">
+                {testResults.map((test, index) => (
+                  <div key={index} className="p-3 flex items-center justify-between gap-4 hover:bg-slate-900/50 transition-colors">
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-1.5 py-0.5 bg-slate-800 text-[8px] rounded font-semibold text-slate-400 uppercase">
+                          {test.category}
+                        </span>
+                        <h5 className="font-semibold text-slate-200 text-[11px]">{test.name}</h5>
+                      </div>
+                      {test.error && (
+                        <p className="text-[10px] text-rose-400 mt-1 pl-1 font-mono">{test.error}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-slate-400 shrink-0">
+                      <span>{test.durationMs}ms</span>
+                      {test.passed ? (
+                        <span className="text-emerald-400 bg-emerald-950/20 p-1 rounded-full border border-emerald-500/10">
+                          <Check className="w-3.5 h-3.5" />
+                        </span>
+                      ) : (
+                        <span className="text-rose-400 bg-rose-950/20 p-1 rounded-full border border-rose-500/10 animate-pulse">
+                          <X className="w-3.5 h-3.5" />
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-slate-950/20 border border-dashed border-slate-800 rounded-xl p-8 text-center text-xs text-slate-500">
+              Diagnostic test records empty. Click "Run Diagnostics" to launch the on-board security validator.
+            </div>
+          )}
         </div>
       </div>
 

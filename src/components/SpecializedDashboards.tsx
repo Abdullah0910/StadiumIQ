@@ -100,18 +100,19 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
 
         <div className="space-y-3">
           <div>
-            <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Lost Item Description</label>
+            <label htmlFor="lost-item-desc" className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5 font-sans">Lost Item Description</label>
             <div className="flex gap-2">
               <input
+                id="lost-item-desc"
                 type="text"
                 value={lostDescription}
                 onChange={(e) => setLostDescription(e.target.value)}
-                className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none"
+                className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
               <button
                 onClick={handleLostFoundSearch}
                 disabled={searchingLost}
-                className="px-5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer disabled:bg-slate-800"
+                className="px-5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-800"
               >
                 {searchingLost ? 'Searching...' : 'Run AI Match'}
               </button>
@@ -232,12 +233,13 @@ export function SecurityDashboard({ incidents, onTriggerEvacuation }: SecurityDa
 
         <div className="space-y-4">
           <div>
-            <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5 font-sans">Select Active Incident Case</label>
+            <label htmlFor="security-incident-select" className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5 font-sans">Select Active Incident Case</label>
             <div className="flex gap-2">
               <select
+                id="security-incident-select"
                 value={selectedIncidentId}
                 onChange={(e) => setSelectedIncidentId(e.target.value)}
-                className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-rose-500"
+                className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
               >
                 {incidents.map(inc => (
                   <option key={inc.id} value={inc.id}>{inc.title} ({inc.priority})</option>
@@ -246,7 +248,7 @@ export function SecurityDashboard({ incidents, onTriggerEvacuation }: SecurityDa
               <button
                 onClick={handleGenerateReport}
                 disabled={generatingReport}
-                className="px-5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer disabled:bg-slate-800"
+                className="px-5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:bg-slate-800"
               >
                 {generatingReport ? 'Analyzing...' : 'Generate report'}
               </button>
@@ -343,31 +345,35 @@ export function OperationsDashboard({ locations, onTuneGates }: OperationsDashbo
         <div className="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800/80 text-xs">
           <div>
             <div className="flex justify-between mb-1 text-slate-400 font-medium">
-              <span>Solar Field Production</span>
+              <label htmlFor="solar-output-range">Solar Field Production</label>
               <span>{solarKW} kW</span>
             </div>
             <input
+              id="solar-output-range"
               type="range"
               min="100"
               max="1000"
               value={solarKW}
               onChange={(e) => setSolarKW(Number(e.target.value))}
-              className="w-full accent-indigo-500"
+              className="w-full accent-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+              aria-label="Solar Field Production in Kilowatts"
             />
           </div>
 
           <div>
             <div className="flex justify-between mb-1 text-slate-400 font-medium">
-              <span>Clean Energy Share</span>
+              <label htmlFor="clean-energy-range">Clean Energy Share</label>
               <span>{cleanPercent}%</span>
             </div>
             <input
+              id="clean-energy-range"
               type="range"
               min="20"
               max="100"
               value={cleanPercent}
               onChange={(e) => setCleanPercent(Number(e.target.value))}
-              className="w-full accent-indigo-500"
+              className="w-full accent-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+              aria-label="Clean Energy Share Percentage"
             />
           </div>
         </div>

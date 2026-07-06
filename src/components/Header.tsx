@@ -40,14 +40,15 @@ export default function Header({
         </div>
 
         {/* Roles Selector Nav */}
-        <div className="flex flex-wrap justify-center items-center gap-2">
+        <div className="flex flex-wrap justify-center items-center gap-2" role="navigation" aria-label="Role dashboard selector">
           {rolesList.map(role => {
             const isActive = currentRole === role.id;
             return (
               <button
                 key={role.id}
                 onClick={() => onSelectRole(role.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                aria-pressed={isActive}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                   isActive
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/20'
                     : `bg-slate-950 text-slate-350 border-slate-800/80 ${role.color}`
@@ -95,7 +96,8 @@ export default function Header({
                       </div>
                       <button
                         onClick={() => onDismissNotification(n.id)}
-                        className="text-[9px] text-slate-500 hover:text-slate-300 cursor-pointer"
+                        aria-label={`Dismiss notification: ${n.text}`}
+                        className="text-[9px] text-slate-500 hover:text-slate-300 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 p-0.5 rounded"
                       >
                         ✕
                       </button>
