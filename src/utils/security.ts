@@ -153,3 +153,27 @@ export function safeJSONParse<T>(rawText: string, fallbackStructure: T, silent =
     }
   }
 }
+
+/**
+ * Recursively sanitizes objects and arrays, cleaning any nested string values.
+ */
+export function deepSanitize<T>(input: T): T {
+  if (input === null || input === undefined) {
+    return input;
+  }
+  if (typeof input === 'string') {
+    return sanitizeInput(input) as unknown as T;
+  }
+  if (Array.isArray(input)) {
+    return input.map(item => deepSanitize(item)) as unknown as T;
+  }
+  if (typeof input === 'object') {
+    const sanitizedObj: Record<string, any> = {};
+    for (const [key, value] of Object.entries(input)) {
+      sanitizedObj[key] = deepSanitize(value);
+    }
+    return sanitizedObj as unknown as T;
+  }
+  return input;
+}
+

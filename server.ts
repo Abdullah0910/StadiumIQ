@@ -3,7 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { GoogleGenAI, Type } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
-import { sanitizeInput, validateParams, safeJSONParse } from './src/utils/security';
+import { sanitizeInput, validateParams, safeJSONParse, deepSanitize } from './src/utils/security';
 
 dotenv.config();
 
@@ -46,7 +46,8 @@ app.get('/api/gemini/status', (req, res) => {
 
 // API Route: Live Crowd Density Analysis & Operations Insights
 app.post('/api/gemini/crowd-analysis', async (req, res) => {
-  const { locations, incidents } = req.body;
+  const sanitizedBody = deepSanitize(req.body);
+  const { locations, incidents } = sanitizedBody;
 
   // Defensive input validation
   const validation = validateParams({ locations, incidents });
@@ -137,13 +138,8 @@ app.post('/api/gemini/crowd-analysis', async (req, res) => {
 
 // API Route: Smart Indoor Route Optimization
 app.post('/api/gemini/optimize-route', async (req, res) => {
-  let { startSeat, destination, accessibilityType, role } = req.body;
-
-  // Sanitize text parameters to block prompt injection and enforce constraints
-  startSeat = sanitizeInput(startSeat);
-  destination = sanitizeInput(destination);
-  accessibilityType = sanitizeInput(accessibilityType);
-  role = sanitizeInput(role);
+  const sanitizedBody = deepSanitize(req.body);
+  const { startSeat, destination, accessibilityType, role } = sanitizedBody;
 
   const validation = validateParams({ startSeat, destination, accessibilityType, role });
   if (!validation.valid) {
@@ -218,7 +214,8 @@ app.post('/api/gemini/optimize-route', async (req, res) => {
 
 // API Route: Intelligent Volunteer Task Assignments
 app.post('/api/gemini/volunteer-tasks', async (req, res) => {
-  const { volunteers, tasks, activeIncidents } = req.body;
+  const sanitizedBody = deepSanitize(req.body);
+  const { volunteers, tasks, activeIncidents } = sanitizedBody;
 
   const validation = validateParams({ volunteers, tasks, activeIncidents });
   if (!validation.valid) {
@@ -290,9 +287,8 @@ app.post('/api/gemini/volunteer-tasks', async (req, res) => {
 
 // API Route: Lost & Found Chat Assistant
 app.post('/api/gemini/lost-found', async (req, res) => {
-  let { userMessage, history, database } = req.body;
-
-  userMessage = sanitizeInput(userMessage);
+  const sanitizedBody = deepSanitize(req.body);
+  const { userMessage, history, database } = sanitizedBody;
 
   const validation = validateParams({ userMessage, database });
   if (!validation.valid) {
@@ -353,10 +349,8 @@ app.post('/api/gemini/lost-found', async (req, res) => {
 
 // API Route: Multi-language Announcement Translator
 app.post('/api/gemini/translate-announcement', async (req, res) => {
-  let { text, targetLanguage } = req.body;
-
-  text = sanitizeInput(text);
-  targetLanguage = sanitizeInput(targetLanguage);
+  const sanitizedBody = deepSanitize(req.body);
+  const { text, targetLanguage } = sanitizedBody;
 
   const validation = validateParams({ text, targetLanguage });
   if (!validation.valid) {
@@ -410,12 +404,8 @@ app.post('/api/gemini/translate-announcement', async (req, res) => {
 
 // API Route: AI Incident Summary & Security Assessment
 app.post('/api/gemini/incident-report', async (req, res) => {
-  let { title, priority, location, description } = req.body;
-
-  title = sanitizeInput(title);
-  priority = sanitizeInput(priority);
-  location = sanitizeInput(location);
-  description = sanitizeInput(description);
+  const sanitizedBody = deepSanitize(req.body);
+  const { title, priority, location, description } = sanitizedBody;
 
   const validation = validateParams({ title, priority, location, description });
   if (!validation.valid) {
@@ -477,7 +467,8 @@ app.post('/api/gemini/incident-report', async (req, res) => {
 
 // API Route: Sustainability Recommendations
 app.post('/api/gemini/sustainability', async (req, res) => {
-  const { solarPowerKW, batteryLevel, cleanEnergyPercent, activeFans } = req.body;
+  const sanitizedBody = deepSanitize(req.body);
+  const { solarPowerKW, batteryLevel, cleanEnergyPercent, activeFans } = sanitizedBody;
 
   const validation = validateParams({ solarPowerKW, batteryLevel, cleanEnergyPercent, activeFans });
   if (!validation.valid) {
@@ -545,10 +536,8 @@ app.post('/api/gemini/sustainability', async (req, res) => {
 
 // API Route: General Smart Stadium Conversational Assistant
 app.post('/api/gemini/chat', async (req, res) => {
-  let { userMessage, history, role } = req.body;
-
-  userMessage = sanitizeInput(userMessage);
-  role = sanitizeInput(role);
+  const sanitizedBody = deepSanitize(req.body);
+  const { userMessage, history, role } = sanitizedBody;
 
   const validation = validateParams({ userMessage, role });
   if (!validation.valid) {
