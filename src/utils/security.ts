@@ -33,6 +33,13 @@ export function sanitizeInput(text: string): string {
   // Strip HTML elements to prevent scripting injections (XSS)
   let clean = text.replace(/<[^>]*>/g, '');
 
+  // Strip common SQL comment markers to neutralize SQL injection attempts
+  clean = clean
+    .replace(/--+/g, '[SQL Comment Shield]')
+    .replace(/\/\*[\s\S]*?\*\//g, '[SQL Block Comment Shield]')
+    .replace(/\bUNION\b\s+\bSELECT\b/gi, '[SQL Union Shield]')
+    .replace(/\bOR\b\s+['"]?\d+['"]?\s*=\s*['"]?\d+['"]?/gi, '[SQL Logical Tautology Shield]');
+
   // Detect and flag/neutralize prompt injection keywords by wrapping them or stripping
   const lowerText = clean.toLowerCase();
   for (const term of PROMPT_INJECTION_BLACKLIST) {

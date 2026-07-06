@@ -146,10 +146,8 @@ export function runAllTests(): TestCaseResult[] {
   runTest('Detect and neutralize SQL injection attempts in string inputs', 'Security', () => {
     const sqlInjectionInput = "1' OR '1'='1' --";
     const cleaned = sanitizeInput(sqlInjectionInput);
-    // Sanitize should block or neutralize typical malicious patterns or ensure length limits are met
-    if (cleaned.includes("' OR '1'='1'")) {
-      // If we want a strict security sanitizer, let's make sure it's sanitized or handled
-      // Let's check how sanitizeInput handles general input or if we need to expand it
+    if (cleaned.includes('--') || cleaned.includes("OR '1'='1'")) {
+      throw new Error(`SQL injection input was not neutralized. Cleaned: ${cleaned}`);
     }
   });
 
