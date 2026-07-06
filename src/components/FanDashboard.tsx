@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StadiumLocation, MatchSchedule } from '../types';
 import { MapPin, Sparkles, Navigation, Flame, ShieldAlert, Utensils, Globe, HelpCircle } from 'lucide-react';
+import { sanitizeInput } from '../utils/security';
 
 interface FanDashboardProps {
   locations: StadiumLocation[];
@@ -56,12 +57,14 @@ export default function FanDashboard({
   };
 
   const handleTranslate = async () => {
+    const cleanText = sanitizeInput(translationText);
+    if (!cleanText.trim()) return;
     setIsTranslating(true);
     try {
       const res = await fetch('/api/gemini/translate-announcement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: translationText, targetLanguage: targetLang })
+        body: JSON.stringify({ text: cleanText, targetLanguage: targetLang })
       });
       const data = await res.json();
       setTranslatedResult(data.translatedText + '\n\nPronunciation Guide: ' + data.pronunciationGuide);
@@ -139,7 +142,10 @@ export default function FanDashboard({
             </div>
 
             <button
-              onClick={() => onTriggerRoute(startSeat, selectedDest, accessibility)}
+              onClick={() => {
+                const cleanStart = sanitizeInput(startSeat);
+                onTriggerRoute(cleanStart, selectedDest, accessibility);
+              }}
               className="w-full mt-2 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               <Sparkles className="w-3.5 h-3.5" />

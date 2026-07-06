@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StadiumLocation, IncidentReport, VolunteerTask } from '../types';
 import { ShieldAlert, Users, Sparkles, Activity, CheckCircle, PlusCircle, AlertTriangle, UserCheck, Terminal, Shield, Check, X } from 'lucide-react';
 import { runAllTests, TestCaseResult } from '../tests/runTests';
+import { sanitizeInput } from '../utils/security';
 
 interface OrganizerDashboardProps {
   locations: StadiumLocation[];
@@ -100,11 +101,16 @@ export default function OrganizerDashboard({
 
   const handleAddNewTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!taskTitle.trim()) return;
+    const cleanTitle = sanitizeInput(taskTitle);
+    const cleanDesc = sanitizeInput(taskDesc);
+    const cleanLoc = sanitizeInput(taskLoc);
+
+    if (!cleanTitle.trim()) return;
+
     onAddTask({
-      title: taskTitle,
-      description: taskDesc,
-      location: taskLoc,
+      title: cleanTitle,
+      description: cleanDesc,
+      location: cleanLoc,
       priority: 'high',
       category: taskCat
     });

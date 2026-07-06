@@ -100,7 +100,7 @@ export function runAllTests(): TestCaseResult[] {
   runTest('Successfully extract JSON blocks enclosed in markdown fences', 'Parsing', () => {
     const markdownOutput = 'Here is your reply: ```json\n{"status": "ok", "count": 10}\n``` Hope this helps!';
     const fallback = { status: 'failed', count: 0 };
-    const parsed = safeJSONParse<{ status: string; count: number }>(markdownOutput, fallback);
+    const parsed = safeJSONParse<{ status: string; count: number }>(markdownOutput, fallback, true);
     if (parsed.status !== 'ok' || parsed.count !== 10) {
       throw new Error(`Failed to parse Markdown-enclosed JSON block. Parsed: ${JSON.stringify(parsed)}`);
     }
@@ -109,7 +109,7 @@ export function runAllTests(): TestCaseResult[] {
   runTest('Heuristically repair trailing commas and format issues', 'Parsing', () => {
     const faultyJSON = `{\n  "name": "North Gate",\n  "status": "congested",\n}`; // Trailing comma in object
     const fallback = { name: '', status: '' };
-    const parsed = safeJSONParse<typeof fallback>(faultyJSON, fallback);
+    const parsed = safeJSONParse<typeof fallback>(faultyJSON, fallback, true);
     if (parsed.name !== 'North Gate' || parsed.status !== 'congested') {
       throw new Error(`Failed to repair trailing commas dynamically. Parsed: ${JSON.stringify(parsed)}`);
     }
@@ -118,7 +118,7 @@ export function runAllTests(): TestCaseResult[] {
   runTest('Gracefully return target schema fallback on critical parser failures', 'Parsing', () => {
     const completeGarbageText = 'The operations system has run into an error.';
     const fallback = { gate: 'Gate-N', count: 120 };
-    const parsed = safeJSONParse<typeof fallback>(completeGarbageText, fallback);
+    const parsed = safeJSONParse<typeof fallback>(completeGarbageText, fallback, true);
     if (parsed.gate !== 'Gate-N' || parsed.count !== 120) {
       throw new Error(`Failed to fall back gracefully on invalid input. Got: ${JSON.stringify(parsed)}`);
     }

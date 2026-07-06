@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StadiumLocation, IncidentReport, VolunteerTask, StadiumNotification } from '../types';
 import { Sparkles, CheckCircle, Search, HelpCircle, ShieldAlert, FileText, AlertTriangle, Play, Zap, RefreshCw, Activity, ArrowRight, Ambulance, Sun, BatteryCharging } from 'lucide-react';
+import { sanitizeInput } from '../utils/security';
 
 // ==========================================
 // 1. VOLUNTEER DASHBOARD
@@ -18,6 +19,8 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
 
   // Lost & Found dynamic matching engine
   const handleLostFoundSearch = async () => {
+    const cleanDesc = sanitizeInput(lostDescription);
+    if (!cleanDesc.trim()) return;
     setSearchingLost(true);
     try {
       const mockDatabase = [
@@ -30,7 +33,7 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userMessage: lostDescription,
+          userMessage: cleanDesc,
           database: mockDatabase,
           history: []
         })

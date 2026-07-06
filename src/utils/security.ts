@@ -81,7 +81,7 @@ export function validateParams(params: Record<string, any>): { valid: boolean; e
  * Resilient JSON parsing helper. Sanitizes Markdown boxes and corrects formatting flaws (e.g. trailing commas, garbage text).
  * If parsing is totally unrecoverable, returns a fallback structure conforming to the target schema to prevent server downtime.
  */
-export function safeJSONParse<T>(rawText: string, fallbackStructure: T): T {
+export function safeJSONParse<T>(rawText: string, fallbackStructure: T, silent = false): T {
   if (!rawText || typeof rawText !== 'string') return fallbackStructure;
 
   let sanitized = rawText.trim();
@@ -103,7 +103,9 @@ export function safeJSONParse<T>(rawText: string, fallbackStructure: T): T {
     // Attempt standard parse first
     return JSON.parse(sanitized) as T;
   } catch (err) {
-    console.warn('JSON parsing failed. Attempting structural recovery procedures...', err);
+    if (!silent) {
+      console.warn('JSON parsing failed. Attempting structural recovery procedures...', err);
+    }
 
     try {
       // Heuristic Clean 1: Clean trailing commas before closing symbols
@@ -114,7 +116,9 @@ export function safeJSONParse<T>(rawText: string, fallbackStructure: T): T {
 
       return JSON.parse(repaired) as T;
     } catch (secondErr) {
-      console.error('JSON recovery procedure failed. Utilizing hardcoded fallback block.', secondErr);
+      if (!silent) {
+        console.error('JSON recovery procedure failed. Utilizing hardcoded fallback block.', secondErr);
+      }
       return fallbackStructure;
     }
   }
