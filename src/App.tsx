@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { UserRole, StadiumLocation, MatchSchedule, IncidentReport, VolunteerTask, StadiumNotification } from './types';
 import { INITIAL_LOCATIONS, INITIAL_MATCHES, INITIAL_INCIDENTS, INITIAL_TASKS, INITIAL_NOTIFICATIONS } from './data';
 import Header from './components/Header';
@@ -21,6 +21,14 @@ export default function App() {
   const [selectedLocation, setSelectedLocation] = useState<StadiumLocation | null>(null);
   const [optimizedRoutePath, setOptimizedRoutePath] = useState<any | null>(null);
   const [isRouting, setIsRouting] = useState(false);
+  const [isSimulated, setIsSimulated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch('/api/gemini/status')
+      .then(res => res.json())
+      .then(data => setIsSimulated(data.isSimulated))
+      .catch(() => setIsSimulated(true));
+  }, []);
 
   // Route path calculation
   const handleTriggerRoute = useCallback(async (startSeat: string, destId: string, accessibility: string) => {
@@ -135,7 +143,7 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
         
         {/* Banner Alert if Running in Simulation Mode */}
-        {process.env.GEMINI_API_KEY === 'MY_GEMINI_API_KEY' && (
+        {isSimulated && (
           <div className="bg-indigo-950/60 border border-indigo-800/80 rounded-2xl p-4 flex items-center justify-between gap-4 animate-pulse">
             <div className="flex items-center gap-3">
               <Sparkles className="text-indigo-400 w-5 h-5 shrink-0" />

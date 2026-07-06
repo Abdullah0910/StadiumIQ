@@ -37,6 +37,13 @@ function getGeminiAI(): GoogleGenAI | null {
   }
 }
 
+// API Route: Check if running with real Gemini API Key
+app.get('/api/gemini/status', (req, res) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const isSimulated = !apiKey || apiKey === 'MY_GEMINI_API_KEY' || apiKey.trim() === '';
+  res.json({ isSimulated });
+});
+
 // API Route: Live Crowd Density Analysis & Operations Insights
 app.post('/api/gemini/crowd-analysis', async (req, res) => {
   const { locations, incidents } = req.body;
