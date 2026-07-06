@@ -41,6 +41,12 @@ export function sanitizeInput(text: string, maxLength?: number): string {
   // Strip HTML elements to prevent scripting injections (XSS)
   clean = clean.replace(/<[^>]*>/g, '');
 
+  // Strip case-insensitive javascript: URIs to block anchor link injection
+  clean = clean.replace(/javascript:/gi, '[blocked-javascript-uri]');
+
+  // Neutralize inline event handlers like onload, onclick, onerror, etc.
+  clean = clean.replace(/\bon[a-z]+\s*=/gi, '[blocked-event-handler]=');
+
   // Strip common SQL comment markers to neutralize SQL injection attempts
   clean = clean
     .replace(/--+/g, '[SQL Comment Shield]')
@@ -87,6 +93,14 @@ export function validateParams(params: Record<string, any>): { valid: boolean; e
     if (Array.isArray(val)) {
       if (val.length > SECURITY_LIMITS.maxListNameLength) {
         return { valid: false, error: `List exceeds maximum allowed capacity: ${key}` };
+      }
+      for (const item of val) {
+        if (item === null || item === undefined) {
+          return { valid: false, error: `Array ${key} contains invalid empty/null values` };
+        }
+        if (typeof item === 'string' && item.trim() === '') {
+          return { valid: false, error: `Array ${key} contains empty string item` };
+        }
       }
     }
   }

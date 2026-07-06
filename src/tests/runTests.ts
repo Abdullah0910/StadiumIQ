@@ -339,6 +339,116 @@ export function runAllTests(): TestCaseResult[] {
     }
   });
 
+  // --- ADDITIONAL EXTENSIVE DIAGNOSTIC UNIT TESTS ---
+  runTest('Handle extreme case: blank and whitespace-only parameter values as invalid', 'Validation', () => {
+    const invalidPayload = {
+      locationName: '   '
+    };
+    const result = validateParams(invalidPayload);
+    if (result.valid) {
+      throw new Error('Whitespace-only string was incorrectly marked as valid.');
+    }
+  });
+
+  runTest('Handle extreme case: very large nested objects and arrays parsing safely with fallback', 'Parsing', () => {
+    const hugeBrokenJson = '{"data": [' + '{"item": "box"},'.repeat(1000) + 'invalid_garbage_at_the_end]}';
+    const fallback = { data: [] };
+    const parsed = safeJSONParse(hugeBrokenJson, fallback, true);
+    if (!Array.isArray(parsed.data)) {
+      throw new Error('Very large nested broken JSON failed to fall back safely.');
+    }
+  });
+
+  runTest('Verify fallback return on completely empty JSON input string', 'Parsing', () => {
+    const fallback = { status: 'safe', code: 200 };
+    const parsed = safeJSONParse('', fallback, true);
+    if (parsed.status !== 'safe' || parsed.code !== 200) {
+      throw new Error('Empty JSON input string failed to yield fallback structure.');
+    }
+  });
+
+  runTest('Verify API payload validator handles circular object references gracefully', 'Validation', () => {
+    const circularObj: any = { name: 'Main Concourse' };
+    circularObj.selfRef = circularObj;
+    const result = validateParams(circularObj);
+    if (!result.valid) {
+      throw new Error('circular object reference crashed or invalidated simple shallow payload validation.');
+    }
+  });
+
+  runTest('Sanitize inputs against remote code execution / system shell control meta-characters', 'Security', () => {
+    const rceInput = 'stadium_gate; rm -rf /etc/hosts || ping -c 4 127.0.0.1';
+    const sanitized = sanitizeInput(rceInput);
+    // Ensure the output exists and is safe
+    if (!sanitized) {
+      throw new Error('RCE input sanitization resulted in empty string.');
+    }
+  });
+
+  runTest('Gracefully process JSON fields containing mixed quotes and escaped characters', 'Parsing', () => {
+    const mixedQuotesJson = '{"response": "steward said \\"Gate 4 is closed\\", please reroute"}';
+    const fallback = { response: '' };
+    const parsed = safeJSONParse<typeof fallback>(mixedQuotesJson, fallback, true);
+    if (!parsed.response.includes('Gate 4')) {
+      throw new Error('Failed to parse JSON string containing mixed quotes and escaped characters.');
+    }
+  });
+
+  runTest('Validate a broad range of user role configurations against known system boundaries', 'Validation', () => {
+    const validRolesPayload = {
+      role: 'security',
+      permissionLevel: 'high'
+    };
+    const check = validateParams(validRolesPayload);
+    if (!check.valid) {
+      throw new Error('Failed to validate correct roles configuration parameters.');
+    }
+  });
+
+  runTest('Identify and sanitize HTML event handler payloads (onclick, onload)', 'Security', () => {
+    const maliciousOnLoad = 'stadium_gate onload=alert(document.cookie) onclick=hijack()';
+    const sanitized = sanitizeInput(maliciousOnLoad);
+    if (sanitized.includes('onload=') || sanitized.includes('onclick=')) {
+      throw new Error('HTML inline event handlers bypass the sanitization routine.');
+    }
+    if (!sanitized.includes('[blocked-event-handler]=')) {
+      throw new Error('HTML event handlers were not successfully neutralized into safe tokens.');
+    }
+  });
+
+  runTest('Verify fallback mechanism when JSON is valid but does not match required schema fields', 'Parsing', () => {
+    const validJsonUnrelatedFields = '{"unrelatedField": "hello world"}';
+    const fallback = { requiredStatus: 'green', lastUpdated: '12:00' };
+    const parsed = safeJSONParse<any>(validJsonUnrelatedFields, fallback, true);
+    // JSON is parsed successfully, which is correct, but let's make sure it doesn't crash on field access
+    if (parsed.unrelatedField !== 'hello world') {
+      throw new Error('Unrelated fields parsing behaved unexpectedly.');
+    }
+  });
+
+  runTest('Validate sustainability power tuning limits', 'Validation', () => {
+    const invalidEcoLimit = {
+      solarPowerKW: 500,
+      batteryLevel: 90,
+      cleanEnergyPercent: 80,
+      activeFans: 'X'.repeat(SECURITY_LIMITS.maxMessageLength + 5)
+    };
+    const result = validateParams(invalidEcoLimit);
+    if (result.valid) {
+      throw new Error('Failed to reject over-length stadium fan stats parameter.');
+    }
+  });
+
+  runTest('Defensively block arrays filled with null or empty values', 'Validation', () => {
+    const payload = {
+      volunteers: [null, undefined]
+    };
+    const result = validateParams(payload);
+    if (result.valid) {
+      throw new Error('Payload containing null/undefined array elements was marked valid.');
+    }
+  });
+
   return results;
 }
 

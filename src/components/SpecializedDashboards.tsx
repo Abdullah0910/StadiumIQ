@@ -12,7 +12,7 @@ interface VolunteerDashboardProps {
   incidents: IncidentReport[];
 }
 
-export function VolunteerDashboard({ tasks, onResolveTask, incidents }: VolunteerDashboardProps) {
+export const VolunteerDashboard = React.memo(function VolunteerDashboard({ tasks, onResolveTask, incidents }: VolunteerDashboardProps) {
   const [lostDescription, setLostDescription] = useState('Black leather wallet with credit cards');
   const [foundMatch, setFoundMatch] = useState<any>(null);
   const [searchingLost, setSearchingLost] = useState(false);
@@ -151,7 +151,7 @@ export function VolunteerDashboard({ tasks, onResolveTask, incidents }: Voluntee
       </div>
     </div>
   );
-}
+});
 
 // ==========================================
 // 2. SECURITY STAFF DASHBOARD
@@ -161,7 +161,7 @@ interface SecurityDashboardProps {
   onTriggerEvacuation: () => void;
 }
 
-export function SecurityDashboard({ incidents, onTriggerEvacuation }: SecurityDashboardProps) {
+export const SecurityDashboard = React.memo(function SecurityDashboard({ incidents, onTriggerEvacuation }: SecurityDashboardProps) {
   const [selectedIncidentId, setSelectedIncidentId] = useState<string>('incident-2');
   const [reportResult, setReportResult] = useState<any>(null);
   const [generatingReport, setGeneratingReport] = useState(false);
@@ -276,7 +276,7 @@ export function SecurityDashboard({ incidents, onTriggerEvacuation }: SecurityDa
       </div>
     </div>
   );
-}
+});
 
 // ==========================================
 // 3. OPERATIONS & SUSTAINABILITY MANAGER
@@ -286,7 +286,7 @@ interface OperationsDashboardProps {
   onTuneGates: (gateId: string, waitTime: number) => void;
 }
 
-export function OperationsDashboard({ locations, onTuneGates }: OperationsDashboardProps) {
+export const OperationsDashboard = React.memo(function OperationsDashboard({ locations, onTuneGates }: OperationsDashboardProps) {
   const [solarKW, setSolarKW] = useState(450);
   const [batteryPercent, setBatteryPercent] = useState(85);
   const [cleanPercent, setCleanPercent] = useState(72);
@@ -435,12 +435,12 @@ export function OperationsDashboard({ locations, onTuneGates }: OperationsDashbo
       </div>
     </div>
   );
-}
+});
 
 // ==========================================
 // 4. MEDICAL STAFF DASHBOARD
 // ==========================================
-export function MedicalDashboard() {
+export const MedicalDashboard = React.memo(function MedicalDashboard() {
   const [buggyDispatched, setBuggyDispatched] = useState(false);
 
   return (
@@ -492,4 +492,4 @@ export function MedicalDashboard() {
       </div>
     </div>
   );
-}
+});

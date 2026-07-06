@@ -10,7 +10,7 @@ interface FanDashboardProps {
   selectedLocation: StadiumLocation | null;
 }
 
-export default function FanDashboard({
+const FanDashboard = React.memo(function FanDashboard({
   locations,
   matches,
   onTriggerRoute,
@@ -364,4 +364,6 @@ export default function FanDashboard({
       </div>
     </div>
   );
-}
+});
+
+export default FanDashboard;

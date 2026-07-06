@@ -12,7 +12,7 @@ interface OrganizerDashboardProps {
   onAddTask: (task: Omit<VolunteerTask, 'id' | 'status'>) => void;
 }
 
-export default function OrganizerDashboard({
+const OrganizerDashboard = React.memo(function OrganizerDashboard({
   locations,
   incidents,
   tasks,
@@ -457,4 +457,6 @@ export default function OrganizerDashboard({
       </div>
     </div>
   );
-}
+});
+
+export default OrganizerDashboard;
