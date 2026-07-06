@@ -394,8 +394,9 @@ export default function OrganizerDashboard({
 
           <form onSubmit={handleAddNewTask} className="space-y-4">
             <div>
-              <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Task Title</label>
+              <label htmlFor="task-title-input" className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Task Title</label>
               <input
+                id="task-title-input"
                 type="text"
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
@@ -405,8 +406,9 @@ export default function OrganizerDashboard({
             </div>
 
             <div>
-              <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Description</label>
+              <label htmlFor="task-desc-textarea" className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Description</label>
               <textarea
+                id="task-desc-textarea"
                 rows={2}
                 value={taskDesc}
                 onChange={(e) => setTaskDesc(e.target.value)}
@@ -417,8 +419,9 @@ export default function OrganizerDashboard({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Location</label>
+                <label htmlFor="task-loc-input" className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Location</label>
                 <input
+                  id="task-loc-input"
                   type="text"
                   value={taskLoc}
                   onChange={(e) => setTaskLoc(e.target.value)}
@@ -427,8 +430,9 @@ export default function OrganizerDashboard({
               </div>
 
               <div>
-                <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Category</label>
+                <label htmlFor="task-cat-select" className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Category</label>
                 <select
+                  id="task-cat-select"
                   value={taskCat}
                   onChange={(e) => setTaskCat(e.target.value as any)}
                   className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500"
